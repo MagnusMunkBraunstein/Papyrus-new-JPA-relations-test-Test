@@ -25,13 +25,4 @@ public class User {
     @JsonIgnore
     private Field field;
 
-
-    @ManyToMany
-    @JoinTable(
-            name = "user_resource",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "resource_id")
-    )
-    private List<Resource> savedResources = new ArrayList<>();
-
 }

@@ -16,12 +16,12 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Field extends FileSystem {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
-
-    String name;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "field", cascade = CascadeType.ALL)
     private List<Resource> resources = new ArrayList<>();
+
+
+    private List<Field> parrent;
+
+
 }
