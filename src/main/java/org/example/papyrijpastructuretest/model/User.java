@@ -1,3 +1,4 @@
+// User.java
 package org.example.papyrijpastructuretest.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -7,8 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.util.ArrayList;
-import java.util.List;
 @Entity
 @Getter
 @ToString
@@ -19,10 +18,9 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
+    private String name;
+    private int password;
 
-
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JsonIgnore
+    @OneToOne(mappedBy = "user")
     private Field field;
-
 }

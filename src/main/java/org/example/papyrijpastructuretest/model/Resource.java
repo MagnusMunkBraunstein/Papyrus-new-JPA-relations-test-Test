@@ -6,18 +6,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.util.List;
 @Entity
 @Getter
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class Resource extends FileSystem{
-
+public class Resource extends FileSystemItem {
 
     @ManyToOne
+    @JoinColumn(name = "field_id")
     private Field field;
-
-
 
 }
