@@ -19,6 +19,7 @@ public class CmdLineRunner {
             Field rootField = new Field(null, user, "Root Field", null);
             fieldRepository.save(rootField);
 
+            // Create and save child fields
             Field child1 = new Field(null, user, "Child 1", rootField);
             Field child2 = new Field(null, user, "Child 2", rootField);
             Field child3 = new Field(null, user, "Child 3", rootField);

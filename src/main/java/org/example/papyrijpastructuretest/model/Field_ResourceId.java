@@ -33,9 +33,13 @@ public class Field_ResourceId implements Serializable {
 
     @Override
     public boolean equals(Object o) {
+        // Check if the current object is being compared with itself
         if (this == o) return true;
+        // Check if the current object is being compared is null or if the classes are different
         if (o == null || getClass() != o.getClass()) return false;
+        // Cast the object to Field_ResourceId for comparison
         Field_ResourceId that = (Field_ResourceId) o;
+        // Compare the field and resource values
         return Objects.equals(field, that.field) && Objects.equals(resource, that.resource);
     }
 
