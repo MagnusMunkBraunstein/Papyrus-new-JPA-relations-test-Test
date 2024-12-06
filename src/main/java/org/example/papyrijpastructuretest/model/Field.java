@@ -30,7 +30,10 @@ public class Field extends FileSystemItem {
     @JoinColumn(name = "user_id", nullable = true)
     private User user;
 
-
+    public Field(String name) {
+        this.name = name;
+        this.parent = null;
+    }
 
     public void add(FileSystemItem item) {
         if (item instanceof Resource) {
