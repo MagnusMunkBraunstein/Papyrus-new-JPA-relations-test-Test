@@ -12,12 +12,14 @@ import java.util.List;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class Resource extends FileSystem{
+public class Resource {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @ManyToOne
-    private Field field;
-
+    private String title;
+    private String author;
 
 
 }

@@ -15,13 +15,22 @@ import java.util.List;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class Field extends FileSystem {
+public class Field {
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "field", cascade = CascadeType.ALL)
-    private List<Resource> resources = new ArrayList<>();
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    private List<Field> parrent;
+    private String name;
+
+    @ManyToOne
+    @JoinColumn(name = "parent_field_id")
+    private Field parentField;
+
 
 
 }
