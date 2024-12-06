@@ -17,16 +17,28 @@ import java.util.List;
 public class Field extends FileSystemItem {
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "field", cascade = CascadeType.ALL)
-    private List<Resource> resources = new ArrayList<>();
+    private List<Resource> childrenResources = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "parent_id")
     private Field parent;
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
-    private List<Field> children = new ArrayList<>();
+    private List<Field> childrenFields = new ArrayList<>();
 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = true)
     private User user;
+
+
+
+    public void add(FileSystemItem item) {
+        if (item instanceof Resource) {
+            childrenResources.add((Resource) item);
+        } else if (item instanceof Field) {
+            childrenFields.add((Field) item);
+        }
+    }
+
+
 }
