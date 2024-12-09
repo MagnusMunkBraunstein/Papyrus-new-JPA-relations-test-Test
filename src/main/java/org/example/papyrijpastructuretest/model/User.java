@@ -3,15 +3,13 @@ package org.example.papyrijpastructuretest.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.ArrayList;
 
 @Entity
 @Getter
+@Setter
 @ToString
 @AllArgsConstructor
 public class User {
@@ -22,7 +20,7 @@ public class User {
     private String name;
     private int password;
 
-    @OneToOne(mappedBy = "user")
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Field field;
 
 

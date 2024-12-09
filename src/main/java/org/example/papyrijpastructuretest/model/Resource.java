@@ -11,10 +11,20 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class Resource extends FileSystemItem {
+public class Resource extends FileSystemItemImpl {
+
+    private String name;
 
     @ManyToOne
     @JoinColumn(name = "field_id")
-    private Field field;
+    private Field parent;
+
+    // --------------- Constructors ---------------
+    public Resource(String name) {
+        super(name);
+    }
+
+
+
 
 }
