@@ -6,25 +6,28 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.util.Collections;
+import java.util.List;
+
 @Entity
 @Getter
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class Resource extends FileSystemItemImpl {
+public class Resource extends FileSystemItem {
 
-    private String name;
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "field_id")
     private Field parent;
 
-    // --------------- Constructors ---------------
     public Resource(String name) {
-        super(name);
+        super();
+        setName(name);
     }
 
-
-
+    @Override
+    public List<FileSystemItem> getChildren() {
+        return Collections.emptyList(); // Leaf node has no children
+    }
 
 }
