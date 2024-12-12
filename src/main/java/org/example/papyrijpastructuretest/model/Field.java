@@ -37,13 +37,31 @@ public class Field extends FileSystemItem {
     }
 
 
-    // --------------- Main Operations ---------------
+    /* --------------- Main Operations ---------------
+         - move()
+            -- move within root-field
+         - rename()
+         - getPath()
+            -- path from root
+         - Validate()
+         - ValidateHierarchy()
+         - isRoot()
+         - hasUniqueName()
+                                                                                */
+
+    public void move() {
+
+    }
 
     public boolean validate() {
         if (isRoot())   return true;
         if (getChildren().isEmpty()) return false;
         return parent != null
                 && hasUniqueName();
+    }
+
+    protected boolean validateHierarchy() {
+        return isRoot() || (!getChildren().isEmpty() && hasUniqueName());
     }
 
     public boolean isRoot() {
@@ -54,8 +72,7 @@ public class Field extends FileSystemItem {
 
     // --------------- helper of Main Operations
 
-        /* hasUnieName()
-         *
+        /*
          *  rule: fields has unique name *at their level*
          *
          * -> Checks if the current field has a unique name among its siblings.

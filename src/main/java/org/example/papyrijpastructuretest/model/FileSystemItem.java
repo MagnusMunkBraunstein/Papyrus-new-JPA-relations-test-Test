@@ -28,16 +28,19 @@ public abstract class FileSystemItem {
     @JoinColumn(name = "parent_id")
     protected Field parent;
 
-    // --------------- Operations ---------------
-        // getChildren()
-        // search()
-        // propagateChange()
-        // display()
+    /* --------------- Operations ---------------
+        1 getChildren()
+        2 getRoot()
+        3 search()
+        4 propagateChange()
+        5 display()
+        6 validateHierarchy()
+                                                         */
 
-    // Abstract method to define recursive hierarchy
+    // 1 Abstract method to define recursive hierarchy
     public abstract List<FileSystemItem> getChildren();
 
-    // Common methods to get root or propagate actions
+    // 2 Common methods to get root or propagate actions
     public FileSystemItem getRoot() {
         FileSystemItem current = this;
         while (current.getParent() != null) {
@@ -46,7 +49,7 @@ public abstract class FileSystemItem {
         return current;
     }
 
-    // Search
+    // 3 Search
     public FileSystemItem search(String name) {
         // Check the current item's name
         if (this.getName().equals(name)) {
@@ -65,7 +68,7 @@ public abstract class FileSystemItem {
         return null;
     }
 
-    // +depth limit
+    // 3.1 +depth limit
     public FileSystemItem search(String name, int depthLimit) {
         if (depthLimit < 0) {
             return null;
@@ -83,21 +86,29 @@ public abstract class FileSystemItem {
     }
 
 
-    // Propagate a change to all children i.e. a 'change' is a Function, which is passed to all children
-        // utilises a Consumer to apply the change
-            // this is a functional interface that takes an argument and returns nothing
-            // in this case it helps by:
-                // taking a FileSystemItem as an argument
-                // and applying the change to it
+    /* 4 Propagate a change to all children
+                    -> i.e. a 'change' is a Function, which is passed to all children
+        - utilises a Consumer to apply the change
+            - this is a functional interface that takes a function instance and applies it to the object
+            - in this case it helps by:
+                - taking a FileSystemItem as an argument
+                - and applying the change to it
+
+         ex:
+            Function upperCaseChange = item -> item.setName(item.getName().toUpperCase());
+            propageChange(upperCaseChange);                                                             */
+
     public void propagateChange(Consumer<FileSystemItem> change) { // custom change function
         change.accept(this);
         for (FileSystemItem child : getChildren()) {
             child.propagateChange(change);
+            int i = 0;
+            int y= 0;
+            if ( i == y) {
+                System.out.println("i equals y");
+            }
         }
     }
-
-    // example usage:
-        // root.propagateChange(item -> item.setName(item.getName().toUpperCase()));
 
     public void display(String indentation) {
         System.out.println(indentation + getName());
