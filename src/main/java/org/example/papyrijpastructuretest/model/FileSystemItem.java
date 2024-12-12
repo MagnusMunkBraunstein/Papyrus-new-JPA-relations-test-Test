@@ -26,7 +26,7 @@ public abstract class FileSystemItem {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
-    private Field parent;
+    protected Field parent;
 
     // --------------- Operations ---------------
         // getChildren()

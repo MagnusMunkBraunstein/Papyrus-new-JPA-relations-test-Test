@@ -37,9 +37,43 @@ public class Field extends FileSystemItem {
     }
 
 
-    // --------------- Operations ---------------
+    // --------------- Main Operations ---------------
 
+    public boolean validate() {
+        if (isRoot())   return true;
+        if (getChildren().isEmpty()) return false;
+        return parent != null
+                && hasUniqueName();
+    }
 
+    public boolean isRoot() {
+        return user != null
+                && getParent() == null
+                && "root".equals(getName());
+    }
+
+    // --------------- helper of Main Operations
+
+        /* hasUnieName()
+         *
+         *  rule: fields has unique name *at their level*
+         *
+         * -> Checks if the current field has a unique name among its siblings.
+         *
+         * The uniqueness is determined at the same hierarchical level (i.e., among the children of the same parent).
+         *
+         * @return {@code true} if the field is the root or if there are no other fields with the same name at the same level;
+         *         {@code false} otherwise.
+         */
+
+    private boolean hasUniqueName() {
+        if (isRoot()) return true;
+        return getParent().getChildren().stream()
+                .filter(item -> item instanceof Field)
+                .noneMatch(item -> item.getName().equals(getName()));
+    }
+
+    // --------------- CRUD ---------------
     @Override
     public List<FileSystemItem> getChildren() {
         List<FileSystemItem> allChildren = new ArrayList<>(childrenFields);
@@ -64,6 +98,8 @@ public class Field extends FileSystemItem {
         }
         item.setParent(null);
     }
+
+
 
 
     // --------------- ToString ---------------
