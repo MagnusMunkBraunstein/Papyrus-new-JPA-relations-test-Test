@@ -1,11 +1,8 @@
 // User.java
 package org.example.papyrijpastructuretest.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.ArrayList;
 
 @Entity
 @Getter
@@ -21,11 +18,11 @@ public class User {
     private int password;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Field field;
+    private Field rootField;
 
 
     // to be continued
     public User () {
-        field = new Field("root");
+        rootField = new Field("root");
     }
 }

@@ -1,5 +1,6 @@
 package org.example.papyrijpastructuretest.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,6 +27,8 @@ public abstract class FileSystemItem {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
+    @JsonIgnore
+    @ToString.Exclude
     protected Field parent;
 
     /* --------------- Operations ---------------

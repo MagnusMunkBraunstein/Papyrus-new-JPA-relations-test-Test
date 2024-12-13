@@ -20,11 +20,11 @@ public class CmdLineRunner {
 
             User savedUser = userRepository.save(user);
 
-            System.out.println("User: " + savedUser.getField());
-            System.out.println("Saved User: " + savedUser.getField());
+            System.out.println("User: " + savedUser.getRootField());
+            System.out.println("Saved User: " + savedUser.getRootField());
 
             // get the root field
-            Field rootField = fieldRepository.findById(savedUser.getField().getId()).get();
+            Field rootField = fieldRepository.findById(savedUser.getRootField().getId()).get();
 
             // Create and Add child fields
             Field child1 = new Field("Child 1");
@@ -32,11 +32,11 @@ public class CmdLineRunner {
             Field child3 = new Field("Child 3");
             Field child4 = new Field("Child 4");
 
-            rootField.add(child1);
-            rootField.display();
-            rootField.get(child1.getName()).add(child11);
-            rootField.add(child3);
-            rootField.add(child4);
+//            rootField.add(child1);
+//            rootField.display();
+//            rootField.get(child1.getName()).add(child11);
+//            rootField.add(child3);
+//            rootField.add(child4);
 
 
             // Create and save sub-child fields
@@ -60,7 +60,7 @@ public class CmdLineRunner {
             rootField.update(child1);
 
             // Save the root field
-            savedUser.setField(rootField);
+            savedUser.setRootField(rootField);
             userRepository.save(savedUser);
 
             // find and call display()
@@ -68,7 +68,7 @@ public class CmdLineRunner {
             if (foundUser.isPresent()) {
                 User user1 = foundUser.get();
                 System.out.println("User: " + user1.getName());
-                user1.getField().display();
+                user1.getRootField().display();
             }
 
         };
