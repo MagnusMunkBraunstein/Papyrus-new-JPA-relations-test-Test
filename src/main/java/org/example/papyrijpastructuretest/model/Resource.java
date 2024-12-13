@@ -14,7 +14,7 @@ import java.util.List;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class Resource extends FileSystemItem {
+public class Resource extends FileSystemItemImpl {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "field_id")

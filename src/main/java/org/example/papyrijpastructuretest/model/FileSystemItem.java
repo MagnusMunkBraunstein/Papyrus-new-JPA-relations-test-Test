@@ -35,7 +35,7 @@ public abstract class FileSystemItem {
         4 propagateChange()
         5 display()
         6 validateHierarchy()
-                                                         */
+       ---------------              ---------------                                                  */
 
     // 1 Abstract method to define recursive hierarchy
     public abstract List<FileSystemItem> getChildren();
@@ -84,7 +84,6 @@ public abstract class FileSystemItem {
         }
         return null;
     }
-
 
     /* 4 Propagate a change to all children
                     -> i.e. a 'change' is a Function, which is passed to all children

@@ -12,7 +12,7 @@ import java.util.List;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class Field extends FileSystemItem {
+public class Field extends FileSystemItemImpl {
 
     // --------------- User ---------------
     @OneToOne(mappedBy = "field")
@@ -47,9 +47,15 @@ public class Field extends FileSystemItem {
          - ValidateHierarchy()
          - isRoot()
          - hasUniqueName()
-                                                                                */
+        ---------------              ---------------                                                                        */
 
-    public void move() {
+    public void move(Field newParent) {
+        if (isRoot()) return;
+        getParent().remove(this);
+
+        // fiend newParent in root hierarchy
+        Field root = (Field) getRoot();
+
 
     }
 
