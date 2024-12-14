@@ -10,41 +10,44 @@ import java.util.Queue;
 import java.util.function.Consumer;
 
 
-@MappedSuperclass
-@Getter
-@NoArgsConstructor
-@Setter
-@AllArgsConstructor
-@ToString
-public abstract class FileSystemItem {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+public interface FileSystemItem {
 
-    @Column(nullable = false, unique = true)
-    private String name;
+    /* --------------- Implemented ---------------
+         > FileSystemItem
+             ---- var ----
+                -- id
+                -- name
+                -- parent
+                -- childrenFields
+                -- childrenResources
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_id")
-    @JsonIgnore
-    @ToString.Exclude
-    protected Field parent;
+             ---- operations ----
+                -- getRoot()
+                -- getParent()
+                -- getChildren()
 
-    /* --------------- Operations ---------------
-        1 getChildren()
-        2 getRoot()
-        3 search()
-        4 propagateChange()
-        5 display()
-        6 validateHierarchy()
-       ---------------              ---------------                                                  */
+         > PathNavigator
+                -- getPath()
+                -- findByPath()
+         > Validator
+                -- validateHierarchy()
+                -- hasUniqueName()
+                -- isRoot()
+          > Mover
+                -- move()
 
-    // 1 Abstract method to define recursive hierarchy
-    public abstract List<FileSystemItem> getChildren();
+        ---------------              ---------------                                                                        */
 
-    // 2 Common methods to get root or propagate actions
-    public FileSystemItem getRoot() {
+    long getId();
+
+    String getName();
+
+    FileSystemItem getParent();
+
+    List<FileSystemItem> getChildren();
+
+    default FileSystemItem getRoot() {
         FileSystemItem current = this;
         while (current.getParent() != null) {
             current = current.getParent();
@@ -52,70 +55,132 @@ public abstract class FileSystemItem {
         return current;
     }
 
-    // 3 Search
-    public FileSystemItem search(String name) {
-        // Check the current item's name
-        if (this.getName().equals(name)) {
-            return this;
+    default String getPath() {
+        FileSystemItem current = this;
+        StringBuilder path = new StringBuilder();
+        while (current.getParent() != null) {
+            path.insert(0, current.getName() + "/");
+            current = current.getParent();
         }
-
-        // Recursively search in children
-        for (FileSystemItem child : this.getChildren()) {
-            FileSystemItem result = child.search(name); // recursive call
-            if (result != null) {
-                return result; // Return as soon as a match is found
-            }
-        }
-
-        // No match found
-        return null;
+        return path.toString();
     }
 
-    // 3.1 +depth limit
-    public FileSystemItem search(String name, int depthLimit) {
-        if (depthLimit < 0) {
-            return null;
-        }
-        if (this.getName().equals(name)) {
-            return this;
-        }
-        for (FileSystemItem child : this.getChildren()) {
-            FileSystemItem result = child.search(name, depthLimit - 1);
-            if (result != null) {
-                return result;
+    default FileSystemItem findByPath(String path) {
+        FileSystemItem current = this;
+        String[] pathParts = path.split("/");
+        for (String part : pathParts) {
+            if (current.getChildren() == null) {
+                return null;
+            }
+            boolean found = false;
+            for (FileSystemItem child : current.getChildren()) {
+                if (child.getName().equals(part)) {
+                    current = child;
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                return null;
             }
         }
-        return null;
+        return current;
     }
 
-    /* 4 Propagate a change to all children
-                    -> i.e. a 'change' is a Function, which is passed to all children
-        - utilises a Consumer to apply the change
-            - this is a functional interface that takes a function instance and applies it to the object
-            - in this case it helps by:
-                - taking a FileSystemItem as an argument
-                - and applying the change to it
-
-         ex:
-            Function upperCaseChange = item -> item.setName(item.getName().toUpperCase());
-            propageChange(upperCaseChange);                                                             */
-
-    public void propagateChange(Consumer<FileSystemItem> change) { // custom change function
-        change.accept(this);
-        for (FileSystemItem child : getChildren()) {
-            child.propagateChange(change);
-            int i = 0;
-            int y= 0;
-            if ( i == y) {
-                System.out.println("i equals y");
+    default void validateHierarchy() {
+        Queue<FileSystemItem> queue = new LinkedList<>();
+        queue.add(this);
+        while (!queue.isEmpty()) {
+            FileSystemItem current = queue.poll();
+            if (current.getChildren() != null) {
+                for (FileSystemItem child : current.getChildren()) {
+                    if (child.getParent() != current) {
+                        throw new IllegalStateException("Invalid hierarchy");
+                    }
+                    queue.add(child);
+                }
             }
         }
     }
 
-    public void display(String indentation) {
-        System.out.println(indentation + getName());
-        for (FileSystemItem child : getChildren()) {
-            child.display(indentation + "-"); // recursive call
+    default boolean hasUniqueName() {
+        FileSystemItem current = this;
+        String name = current.getName();
+        FileSystemItem parent = current.getParent();
+        if (parent == null) {
+            return true;
         }
+        for (FileSystemItem sibling : parent.getChildren()) {
+            if (sibling != current && sibling.getName().equals(name)) {
+                return false;
+            }
+        }
+        return true;
     }
+
+    default boolean isRoot() {
+        return getParent() == null && "root".equals(getName());
+    }
+
+    default void move(FileSystemItem newParent) {
+        if (isRoot()) {
+            return;
+        }
+        if (newParent == null) {
+            return;
+        }
+        if (this.equals(newParent)) {
+            return;
+        }
+        if (getParent().equals(newParent)) {
+            return;
+        }
+        if (newParent.isRoot()) {
+            return;
+        }
+        if (newParent.getChildren().stream().anyMatch(child -> child.getName().equals(getName()))) {
+            return;
+        }
+        getParent().getChildren().remove(this);
+        newParent.getChildren().add(this);
+        setParent(newParent);
+    }
+
+    void display(String indent);
+
+    // --------------- Setters ---------------
+
+    void setParent(FileSystemItem parent);
+
+    void setName(String name);
+
+    void setChildren(List<FileSystemItem> children);
+
+    void addChild(FileSystemItem child);
+
+    void removeChild(FileSystemItem child);
+
+    void forEachChild(Consumer<FileSystemItem> action);
+
+    void clearChildren();
+
+    void setRoot(boolean root);
+
+    boolean isLeaf();
+
+    void setLeaf(boolean leaf);
+
+    void setPath(String path);
+
+    String getFullPath();
+
+    void setFullPath(String fullPath);
+
+    void propagateChange(Consumer<FileSystemItem> change);
+
+    FileSystemItem search(String name);
+    FileSystemItem search(String name, int depthLimit);
 }
+
+
+

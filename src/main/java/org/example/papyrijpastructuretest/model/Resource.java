@@ -16,10 +16,6 @@ import java.util.List;
 @AllArgsConstructor
 public class Resource extends FileSystemItemImpl {
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "field_id")
-    private Field parent;
-
     public Resource(String name) {
         super();
         setName(name);
@@ -29,5 +25,6 @@ public class Resource extends FileSystemItemImpl {
     public List<FileSystemItem> getChildren() {
         return Collections.emptyList(); // Leaf node has no children
     }
+
 
 }
