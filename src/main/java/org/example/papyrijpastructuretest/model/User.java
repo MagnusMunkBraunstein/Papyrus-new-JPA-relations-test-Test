@@ -4,6 +4,8 @@ package org.example.papyrijpastructuretest.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -19,7 +21,6 @@ public class User {
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Field rootField;
-
 
     // to be continued
     public User () {

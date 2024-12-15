@@ -10,59 +10,25 @@ import org.example.papyrijpastructuretest.utils.ValidationUtils;
 
 import java.util.*;
 import java.util.function.Consumer;
-@Entity
+
 @ToString
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public abstract class FileSystemItemImpl implements FileSystemItem {
-    /* --------------- Implemented ---------------
-         > FileSystemItem
-             ---- var ----
-                -- id
-                -- name
-                -- parent
-                -- childrenFields
-                -- childrenResources
 
-             ---- operations ----
-                -- getRoot()
-                -- getParent()
-                -- getChildren()
-
-         > PathNavigator
-                -- getPath()
-                -- findByPath()
-         > Validator
-                -- validateHierarchy()
-                -- hasUniqueName()
-                -- isRoot()
-          > Mover
-                -- move()
-
-        ---------------              ---------------                                                                        */
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(nullable = false, unique = true)
     private String name;
 
     // User var is not included in the FileSystemItem interface
         // only included in Field (and only initialized in Root field)
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_id") // parent_id is the column in the child table
-    @JsonIgnore
-    @ToString.Exclude // avoid infinite recursion
     protected Field parent;
 
-    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, cascade = CascadeType.ALL) // mappedBy is the field in the child class
     protected List<Field> childrenFields = new ArrayList<>();
 
-    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     protected List<Resource> childrenResources = new ArrayList<>();
 
 

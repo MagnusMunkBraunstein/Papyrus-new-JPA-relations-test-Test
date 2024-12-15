@@ -1,5 +1,6 @@
 package org.example.papyrijpastructuretest.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,12 +15,23 @@ import java.util.List;
 @AllArgsConstructor
 public class Field extends FileSystemItemImpl {
 
-    // --------------- User ---------------
-    @OneToOne(mappedBy = "field")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+
+    @Column(nullable = false, unique = true)
+    private String name;
+
+    @OneToOne(mappedBy = "rootField", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", nullable = true)
     @ToString.Exclude
     private User user;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_id") // parent_id is the column in the child table
+    @JsonIgnore
+    @ToString.Exclude // avoid infinite recursion
+    private Field parent;
 
     // --------------- Children ---------------
     @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, cascade = CascadeType.ALL)

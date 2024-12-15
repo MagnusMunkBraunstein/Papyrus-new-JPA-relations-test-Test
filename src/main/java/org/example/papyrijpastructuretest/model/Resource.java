@@ -1,34 +1,50 @@
 package org.example.papyrijpastructuretest.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @ToString
 @NoArgsConstructor
-
+@AllArgsConstructor
 public class Resource extends FileSystemItemImpl {
 
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+
+    @Column(nullable = false, unique = true)
     private String name;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_id") // parent_id is the column in the child table
+    @JsonIgnore
+    @ToString.Exclude // avoid infinite recursion
+    protected Field parent;
+
+    // --------------- Children ---------------
+    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Field> childrenFields = new ArrayList<>();
+
+    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Resource> childrenResources = new ArrayList<>();
+
+
+
     private String author;
     private String description;
     private String type;
     private String url;
     private String refId;
 
-    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "savedResources")
-    private List<User> users;
-
-    @ManyToOne
-    private Field field;
 
     // --------------- Constructors ---------------
 
@@ -62,16 +78,6 @@ public class Resource extends FileSystemItemImpl {
 
     public Resource setRefId(String refId) {
         this.refId = refId;
-        return this;
-    }
-
-    public Resource setUsers(List<User> users) {
-        this.users = users;
-        return this;
-    }
-
-    public Resource setField(Field field) {
-        this.field = field;
         return this;
     }
 
