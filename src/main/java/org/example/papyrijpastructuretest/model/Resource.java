@@ -21,5 +21,4 @@ public class Resource extends FileSystemItemImpl {
         setName(name);
     }
 
-
 }

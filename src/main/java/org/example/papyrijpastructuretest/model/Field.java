@@ -66,9 +66,6 @@ public class Field extends FileSystemItemImpl {
                 && hasUniqueName();
     }
 
-    protected boolean validateHierarchy() {
-        return isRoot() || (!getChildren().isEmpty() && hasUniqueName());
-    }
 
     public boolean isRoot() {
         return user != null
@@ -89,7 +86,7 @@ public class Field extends FileSystemItemImpl {
          *         {@code false} otherwise.
          */
 
-    private boolean hasUniqueName() {
+    public boolean hasUniqueName() {
         if (isRoot()) return true;
         return getParent().getChildren().stream()
                 .filter(item -> item instanceof Field)

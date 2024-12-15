@@ -62,7 +62,6 @@ public interface FileSystemItem {
 
     void setLeaf(boolean leaf);
 
-
     void propagateChange(Consumer<FileSystemItem> change);
 
     FileSystemItem search(String name);

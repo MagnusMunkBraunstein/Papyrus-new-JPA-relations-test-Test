@@ -75,7 +75,6 @@ public abstract class FileSystemItemImpl implements FileSystemItem {
         return current;
     }
 
-
     public FileSystemItem findByPath(String path) {
         FileSystemItem current = this;
         String[] pathParts = path.split("/");
@@ -98,21 +97,6 @@ public abstract class FileSystemItemImpl implements FileSystemItem {
         return current;
     }
 
-    public void validateHierarchy() {
-        Queue<FileSystemItem> queue = new LinkedList<>();
-        queue.add(this);
-        while (!queue.isEmpty()) {
-            FileSystemItem current = queue.poll();
-            if (current.getChildren() != null) {
-                for (FileSystemItem child : current.getChildren()) {
-                    if (child.getParent() != current) {
-                        throw new IllegalStateException("Invalid hierarchy");
-                    }
-                    queue.add(child);
-                }
-            }
-        }
-    }
 
 
     /* --------------- Operations ---------------
@@ -125,7 +109,6 @@ public abstract class FileSystemItemImpl implements FileSystemItem {
        ---------------              ---------------                                                  */
 
     // leaf
-
     public boolean isLeaf() {
         return getChildren().isEmpty();
     }
@@ -135,7 +118,6 @@ public abstract class FileSystemItemImpl implements FileSystemItem {
             clearChildren();
         }
     }
-
 
     // children
     public List<FileSystemItem> getChildren() {
@@ -247,7 +229,7 @@ public abstract class FileSystemItemImpl implements FileSystemItem {
     }
 
     public boolean validate() {
-        return ValidationUtils.validateHierarchy(this);
+        return ValidationUtils.validate(this);
     }
 
     public boolean isRoot() {

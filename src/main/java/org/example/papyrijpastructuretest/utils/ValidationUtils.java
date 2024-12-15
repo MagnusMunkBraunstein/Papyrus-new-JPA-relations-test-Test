@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ValidationUtils {
+
     public static boolean isValidMove(FileSystemItem sourcePrm, FileSystemItem targetPrm) {
         FileSystemItemImpl source = validateType(sourcePrm, null);
         FileSystemItemImpl target = validateType(null, targetPrm);
@@ -23,7 +24,7 @@ public class ValidationUtils {
 
 
 
-    public static boolean validateHierarchy(FileSystemItemImpl item) {
+    public static boolean validate(FileSystemItemImpl item) {
         if (item.isRoot()) return true;
         return !item.getChildren().isEmpty() && hasUniqueName(item);
     }
