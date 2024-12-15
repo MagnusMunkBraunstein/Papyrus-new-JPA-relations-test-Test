@@ -3,6 +3,7 @@ package org.example.papyrijpastructuretest.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import org.example.papyrijpastructuretest.utils.FileSystemUtils;
 import org.example.papyrijpastructuretest.utils.MovementUtils;
 import org.example.papyrijpastructuretest.utils.PathNavigationUtils;
 import org.example.papyrijpastructuretest.utils.ValidationUtils;
@@ -65,47 +66,21 @@ public abstract class FileSystemItemImpl implements FileSystemItem {
     protected List<Resource> childrenResources = new ArrayList<>();
 
 
-    // operations
-
-    public FileSystemItem getRoot() {
-        FileSystemItem current = this;
-        while (current.getParent() != null) {
-            current = current.getParent();
-        }
-        return current;
-    }
-
-    public FileSystemItem findByPath(String path) {
-        FileSystemItem current = this;
-        String[] pathParts = path.split("/");
-        for (String part : pathParts) {
-            if (current.getChildren() == null) {
-                return null;
-            }
-            boolean found = false;
-            for (FileSystemItem child : current.getChildren()) {
-                if (child.getName().equals(part)) {
-                    current = child;
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                return null;
-            }
-        }
-        return current;
-    }
-
-
-
     /* --------------- Operations ---------------
-        1 getChildren()
-        2 getRoot()
-        3 search()
-        4 propagateChange()
-        5 display()
-        6 validateHierarchy()
+        - isLeaf()
+        - getRoot()
+        - getParent()
+        - getChildren()
+            ---
+        - search()
+        - propagateChange()
+        - display()
+            ---
+        - move()
+        - getPath()
+        - validate()
+        - isRoot()
+        - hasUniqueName()
        ---------------              ---------------                                                  */
 
     // leaf
@@ -149,40 +124,6 @@ public abstract class FileSystemItemImpl implements FileSystemItem {
         childrenResources.clear();
     }
 
-    // search
-
-    public FileSystemItem search(String name) {
-        // Check the current item's name
-        if (this.getName().equals(name)) {
-            return this;
-        }
-
-        // Recursively search in children
-        for (FileSystemItem child : this.getChildren()) {
-            FileSystemItem result = child.search(name); // recursive call
-            if (result != null) {
-                return result; // Return as soon as a match is found
-            }
-        }
-
-        // No match found
-        return null;
-    }
-    public FileSystemItem search(String name, int depthLimit) {
-        if (depthLimit < 0) {
-            return null;
-        }
-        if (this.getName().equals(name)) {
-            return this;
-        }
-        for (FileSystemItem child : this.getChildren()) {
-            FileSystemItem result = child.search(name, depthLimit - 1);
-            if (result != null) {
-                return result;
-            }
-        }
-        return null;
-    }
 
     /* 4 Propagate a change to all children
                     -> i.e. a 'change' is a Function, which is passed to all children
@@ -218,14 +159,30 @@ public abstract class FileSystemItemImpl implements FileSystemItem {
 
     /* --------------- Util Methods --------------- */
 
+    public FileSystemItem search(String name) {
+        return FileSystemUtils.search(this, name);
+    }
+
+    public FileSystemItem search(String name, int depthLimit) {
+        return FileSystemUtils.search(this, name, depthLimit);
+    }
+
     public void move(Field newParent) {
         if (ValidationUtils.isValidMove(this, newParent)) {
             MovementUtils.executeMove(this, newParent);
         }
     }
 
+    public FileSystemItem getRoot() {
+        return PathNavigationUtils.getRoot(this);
+    }
+
     public String getPath() {
         return PathNavigationUtils.getPath(this);
+    }
+
+    public FileSystemItem findByPath(String path) {
+        return PathNavigationUtils.findByPath(this, path);
     }
 
     public boolean validate() {

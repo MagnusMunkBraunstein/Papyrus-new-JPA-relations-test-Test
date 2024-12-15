@@ -12,6 +12,15 @@ import java.util.List;
 @Component
 public class PathNavigationUtils {
 
+    // operations
+    public static FileSystemItem getRoot(FileSystemItem item) {
+        FileSystemItem current = item;
+        while (current.getParent() != null) {
+            current = current.getParent();
+        }
+        return current;
+    }
+
     public static String getPath(FileSystemItemImpl item) {
         List<String> pathParts = new ArrayList<>();
         FileSystemItem current = item;
@@ -24,11 +33,27 @@ public class PathNavigationUtils {
         return String.join("/", pathParts);
     }
 
-    public static FileSystemItem findByPath(FileSystemItemImpl root, String path) {
-        // Path resolution logic
+    public static FileSystemItem findByPath(FileSystemItemImpl item, String path) {
+        FileSystemItem current = item;
+        String[] pathParts = path.split("/");
 
-
-        return new Field();
+        for (String part : pathParts) {
+            if (current.getChildren() == null) {
+                return null;
+            }
+            boolean found = false;
+            for (FileSystemItem child : current.getChildren()) {
+                if (child.getName().equals(part)) {
+                    current = child;
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                return null;
+            }
+        }
+        return current;
     }
 
 

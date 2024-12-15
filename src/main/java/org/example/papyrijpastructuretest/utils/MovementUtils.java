@@ -10,8 +10,8 @@ public class MovementUtils {
 
     public static void executeMove(FileSystemItemImpl fileSystemItem, Field newParent) {
         Field oldParent = fileSystemItem.getParent();
-        oldParent.remove(fileSystemItem);
-        newParent.add(fileSystemItem);
+            oldParent.removeChild(fileSystemItem);
+            newParent.addChild(fileSystemItem);
         fileSystemItem.setParent(newParent);
     }
 }
