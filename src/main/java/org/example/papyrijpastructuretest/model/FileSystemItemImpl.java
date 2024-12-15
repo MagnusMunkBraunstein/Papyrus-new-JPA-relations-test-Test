@@ -95,6 +95,16 @@ public abstract class FileSystemItemImpl implements FileSystemItem {
     }
 
     // children
+
+    public FileSystemItem getChild(String name) {
+        for (FileSystemItem child : getChildren()) {
+            if (child.getName().equals(name)) {
+                return child;
+            }
+        }
+        return null;
+    }
+
     public List<FileSystemItem> getChildren() {
         List<FileSystemItem> children = new ArrayList<>();
             children.addAll(childrenFields);
@@ -103,15 +113,16 @@ public abstract class FileSystemItemImpl implements FileSystemItem {
         return isLeaf() ? Collections.emptyList() : children;
     }
 
-    public void addChild(FileSystemItem child) {
+    public FileSystemItem add(FileSystemItem child) {
         if (child instanceof Field) {
             childrenFields.add((Field) child);
         } else if (child instanceof Resource) {
             childrenResources.add((Resource) child);
         }
+        return this;
     }
 
-    public void removeChild(FileSystemItem child) {
+    public void remove(FileSystemItem child) {
         if (child instanceof Field) {
             childrenFields.remove(child);
         } else if (child instanceof Resource) {
@@ -149,10 +160,15 @@ public abstract class FileSystemItemImpl implements FileSystemItem {
         }
     }
 
-    public void display(String indentation) {
+    public void display() {
+        for (FileSystemItem child : getChildren()) {
+            child.displayRecursive("-"); // recursive call
+        }
+    }
+    public void displayRecursive(String indentation) {
         System.out.println(indentation + getName());
         for (FileSystemItem child : getChildren()) {
-            child.display(indentation + "-"); // recursive call
+            child.displayRecursive(indentation + "-"); // recursive call
         }
     }
 

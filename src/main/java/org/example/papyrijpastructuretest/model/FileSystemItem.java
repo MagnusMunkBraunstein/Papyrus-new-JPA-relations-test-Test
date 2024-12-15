@@ -1,12 +1,6 @@
 package org.example.papyrijpastructuretest.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
-import lombok.*;
-
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 import java.util.function.Consumer;
 
 
@@ -46,13 +40,17 @@ public interface FileSystemItem {
 
     List<FileSystemItem> getChildren();
 
-    void display(String indent);
+    void display();
 
-    // --------------- Setters ---------------
+    void displayRecursive(String indentation);
 
-    void addChild(FileSystemItem child);
+    // --------------- CRUD ---------------
 
-    void removeChild(FileSystemItem child);
+    FileSystemItem getChild(String name);
+
+    FileSystemItem add(FileSystemItem child);
+
+    void remove(FileSystemItem child);
 
     void clearChildren();
 

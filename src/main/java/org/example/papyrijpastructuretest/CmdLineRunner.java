@@ -32,11 +32,12 @@ public class CmdLineRunner {
             Field child3 = new Field("Child 3");
             Field child4 = new Field("Child 4");
 
-//            rootField.add(child1);
-//            rootField.display();
-//            rootField.get(child1.getName()).add(child11);
-//            rootField.add(child3);
-//            rootField.add(child4);
+            rootField.add(child1);
+            rootField.display();
+            rootField.getChild(child1.getName())
+                    .add(child11);
+            rootField.add(child3);
+            rootField.add(child4);
 
 
             // Create and save sub-child fields
@@ -56,8 +57,8 @@ public class CmdLineRunner {
 
             // Save the resources
             rootField.add(resource1)
-                    .get("child1").add(resource2);
-            rootField.update(child1);
+                    .getChild("child1")
+                    .add(resource2);
 
             // Save the root field
             savedUser.setRootField(rootField);
