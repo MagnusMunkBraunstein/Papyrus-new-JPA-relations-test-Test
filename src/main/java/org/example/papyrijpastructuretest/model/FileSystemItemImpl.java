@@ -7,8 +7,7 @@ import org.example.papyrijpastructuretest.utils.MovementUtils;
 import org.example.papyrijpastructuretest.utils.PathNavigationUtils;
 import org.example.papyrijpastructuretest.utils.ValidationUtils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 @Entity
 @ToString
@@ -66,6 +65,56 @@ public abstract class FileSystemItemImpl implements FileSystemItem {
     protected List<Resource> childrenResources = new ArrayList<>();
 
 
+    // operations
+
+    public FileSystemItem getRoot() {
+        FileSystemItem current = this;
+        while (current.getParent() != null) {
+            current = current.getParent();
+        }
+        return current;
+    }
+
+
+    public FileSystemItem findByPath(String path) {
+        FileSystemItem current = this;
+        String[] pathParts = path.split("/");
+        for (String part : pathParts) {
+            if (current.getChildren() == null) {
+                return null;
+            }
+            boolean found = false;
+            for (FileSystemItem child : current.getChildren()) {
+                if (child.getName().equals(part)) {
+                    current = child;
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                return null;
+            }
+        }
+        return current;
+    }
+
+    public void validateHierarchy() {
+        Queue<FileSystemItem> queue = new LinkedList<>();
+        queue.add(this);
+        while (!queue.isEmpty()) {
+            FileSystemItem current = queue.poll();
+            if (current.getChildren() != null) {
+                for (FileSystemItem child : current.getChildren()) {
+                    if (child.getParent() != current) {
+                        throw new IllegalStateException("Invalid hierarchy");
+                    }
+                    queue.add(child);
+                }
+            }
+        }
+    }
+
+
     /* --------------- Operations ---------------
         1 getChildren()
         2 getRoot()
@@ -75,13 +124,50 @@ public abstract class FileSystemItemImpl implements FileSystemItem {
         6 validateHierarchy()
        ---------------              ---------------                                                  */
 
+    // leaf
 
+    public boolean isLeaf() {
+        return getChildren().isEmpty();
+    }
+
+    public void setLeaf(boolean leaf) {
+        if (leaf) {
+            clearChildren();
+        }
+    }
+
+
+    // children
     public List<FileSystemItem> getChildren() {
         List<FileSystemItem> children = new ArrayList<>();
-        children.addAll(childrenFields);
-        children.addAll(childrenResources);
-        return children;
+            children.addAll(childrenFields);
+            children.addAll(childrenResources);
+
+        return isLeaf() ? Collections.emptyList() : children;
     }
+
+    public void addChild(FileSystemItem child) {
+        if (child instanceof Field) {
+            childrenFields.add((Field) child);
+        } else if (child instanceof Resource) {
+            childrenResources.add((Resource) child);
+        }
+    }
+
+    public void removeChild(FileSystemItem child) {
+        if (child instanceof Field) {
+            childrenFields.remove(child);
+        } else if (child instanceof Resource) {
+            childrenResources.remove(child);
+        }
+    }
+
+    public void clearChildren() {
+        childrenFields.clear();
+        childrenResources.clear();
+    }
+
+    // search
 
     public FileSystemItem search(String name) {
         // Check the current item's name
@@ -171,6 +257,5 @@ public abstract class FileSystemItemImpl implements FileSystemItem {
     public boolean hasUniqueName() {
         return ValidationUtils.hasUniqueName(this);
     }
-
 
 }

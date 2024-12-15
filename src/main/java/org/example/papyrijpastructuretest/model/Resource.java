@@ -21,10 +21,5 @@ public class Resource extends FileSystemItemImpl {
         setName(name);
     }
 
-    @Override
-    public List<FileSystemItem> getChildren() {
-        return Collections.emptyList(); // Leaf node has no children
-    }
-
 
 }
