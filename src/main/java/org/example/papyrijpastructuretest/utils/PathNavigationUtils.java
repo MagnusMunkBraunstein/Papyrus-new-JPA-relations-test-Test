@@ -2,7 +2,7 @@ package org.example.papyrijpastructuretest.utils;
 
 import org.example.papyrijpastructuretest.model.Field;
 import org.example.papyrijpastructuretest.model.FileSystemItem;
-import org.example.papyrijpastructuretest.model.FileSystemItemImpl;
+import org.example.papyrijpastructuretest.model.Field;
 import org.example.papyrijpastructuretest.model.User;
 import org.springframework.stereotype.Component;
 
@@ -13,15 +13,19 @@ import java.util.List;
 public class PathNavigationUtils {
 
     // operations
-    public static FileSystemItem getRoot(FileSystemItem item) {
+    public static Field getRoot(FileSystemItem item) {
         FileSystemItem current = item;
         while (current.getParent() != null) {
             current = current.getParent();
         }
-        return current;
+        return (Field) current;
     }
 
-    public static String getPath(FileSystemItemImpl item) {
+    public static String getPath(FileSystemItem item) {
+        if (item == null || item.isLeaf()) {
+            return null;
+        }
+
         List<String> pathParts = new ArrayList<>();
         FileSystemItem current = item;
 
@@ -33,16 +37,20 @@ public class PathNavigationUtils {
         return String.join("/", pathParts);
     }
 
-    public static FileSystemItem findByPath(FileSystemItemImpl item, String path) {
-        FileSystemItem current = item;
+    public static FileSystemItem findByPath(Field root, String path) {
+        if (root == null || root.isLeaf()) {
+            return null;
+        }
+
+        FileSystemItem current = root;
         String[] pathParts = path.split("/");
 
         for (String part : pathParts) {
-            if (current.getChildren() == null) {
+            if (root.getChildren() == null) {
                 return null;
             }
             boolean found = false;
-            for (FileSystemItem child : current.getChildren()) {
+            for (FileSystemItem child : root.getChildren()) {
                 if (child.getName().equals(part)) {
                     current = child;
                     found = true;

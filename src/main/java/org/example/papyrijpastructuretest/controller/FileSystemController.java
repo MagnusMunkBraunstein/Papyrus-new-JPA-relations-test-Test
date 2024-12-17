@@ -4,6 +4,7 @@ import org.example.papyrijpastructuretest.exception.userContext.UserNotAuthentic
 import org.example.papyrijpastructuretest.service.FileSystemService;
 import org.example.papyrijpastructuretest.service.UserContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,12 +12,16 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api")
 public class FileSystemController {
-    private final UserContext userContext;
-    private final FileSystemService fileSystemService;
+    private UserContext userContext;
+    private FileSystemService fileSystemService;
 
     @Autowired
-    public FileSystemController(UserContext userContext, FileSystemService fileSystemService) {
+    public void setUserContext(@Lazy UserContext userContext) {
         this.userContext = userContext;
+    }
+
+    @Autowired
+    public void setFileSystemService(@Lazy FileSystemService fileSystemService) {
         this.fileSystemService = fileSystemService;
     }
 

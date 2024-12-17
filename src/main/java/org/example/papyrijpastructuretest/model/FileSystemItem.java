@@ -36,34 +36,19 @@ public interface FileSystemItem {
 
     String getName();
 
-    FileSystemItem getParent();
+    Field getParent();
+    void setParent(Field newParent);
 
     List<FileSystemItem> getChildren();
-
-    void display();
-
-    void displayRecursive(String indentation);
-
-    // --------------- CRUD ---------------
-
-    FileSystemItem getChild(String name);
-
-    FileSystemItem add(FileSystemItem child);
-
-    void remove(FileSystemItem child);
-
-    void clearChildren();
 
     // --------------- Main Operations ---------------
 
     boolean isLeaf();
 
-    void setLeaf(boolean leaf);
-
-    void propagateChange(Consumer<FileSystemItem> change);
-
+    // --------------- Util Methods ---------------
     FileSystemItem search(String name);
-    FileSystemItem search(String name, int depthLimit);
+    FileSystemItem search(String name, int depthlimit);
+
 }
 
 

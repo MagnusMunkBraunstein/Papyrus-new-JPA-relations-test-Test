@@ -8,35 +8,21 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-@Entity
-@Getter
-@Setter
-@ToString
-@NoArgsConstructor
+@Data
+@EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
+@NoArgsConstructor
+
+@Entity
+@Table(name = "resources")
 public class Resource extends FileSystemItemImpl {
 
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-
-    @Column(nullable = false, unique = true)
-    private String name;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_id") // parent_id is the column in the child table
-    @JsonIgnore
-    @ToString.Exclude // avoid infinite recursion
-    protected Field parent;
-
-    // --------------- Children ---------------
-    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Field> childrenFields = new ArrayList<>();
-
-    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Resource> childrenResources = new ArrayList<>();
-
+    @JoinColumn(name = "parent_id")
+    @JsonIgnore // avoid infinite recursion
+    @ToString.Exclude
+    private Field parent;
 
 
     private String author;
@@ -53,6 +39,10 @@ public class Resource extends FileSystemItemImpl {
         setName(name);
     }
 
+
+    public List<FileSystemItem> getChildren() {
+        return Collections.emptyList();
+    }
 
     // ------------------ Setters ------------------
 
@@ -81,5 +71,8 @@ public class Resource extends FileSystemItemImpl {
         return this;
     }
 
-
+    @Override
+    public boolean isLeaf() {
+        return true;
+    }
 }

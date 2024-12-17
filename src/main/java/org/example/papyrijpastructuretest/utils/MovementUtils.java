@@ -15,9 +15,8 @@ public class MovementUtils {
         }
         FileSystemItemImpl itemImpl = (FileSystemItemImpl) item;
 
-        Field oldParent = itemImpl.getParent();
-            oldParent.remove(item);
-            newParent.add(item);
+        itemImpl.getParent()
+                .remove(itemImpl);
 
         itemImpl.setParent((Field) newParent);
     }
